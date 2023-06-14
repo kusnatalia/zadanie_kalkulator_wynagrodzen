@@ -20,3 +20,52 @@ lista_pracownikow = [
 
 nazwa_pliku = 'pracownicy.csv'
 zapisz_do_csv(nazwa_pliku, lista_pracownikow)
+
+import csv
+
+
+class Pracownik:
+    def __init__(self, imie, nazwisko, wynagrodzenie_brutto):
+        self.imie = imie
+        self.nazwisko = nazwisko
+        self.wynagrodzenie_brutto = float(wynagrodzenie_brutto)
+
+    def oblicz_wynagrodzenie_netto(self):
+
+
+        skladki  = self.wynagrodzenie_brutto * 0.1371
+        skladka_zdrowotna= (self.wynagrodzenie_brutto-skladki)*0.09
+        dochod=self.wynagrodzenie_brutto-skladki-250
+        zaliczka =dochod*0.12 - 300
+
+        wynagrodzenie_netto = self.wynagrodzenie_brutto - skladki - skladka_zdrowotna-dochod
+        return wynagrodzenie_netto
+
+    def oblicz_calkowity_koszt(self):
+        wynagrodzenie_netto = self.oblicz_wynagrodzenie_netto()
+        koszt_pracodawcy = self.wynagrodzenie_brutto + (self.wynagrodzenie_brutto * 0.1) + (
+                    self.wynagrodzenie_brutto * 0.3)  # Przykładowe dodatkowe koszty pracodawcy
+        return koszt_pracodawcy
+
+
+def oblicz_calkowity_koszt_pracodawcy():
+    lista_pracownikow = []
+
+    with open('pracownicy.csv', 'r') as plik_csv:
+        czytnik = csv.reader(plik_csv)
+
+        next(czytnik)
+        for wiersz in czytnik:
+            imie, nazwisko, wynagrodzenie_brutto = wiersz
+            pracownik = Pracownik(imie, nazwisko, wynagrodzenie_brutto)
+            lista_pracownikow.append(pracownik)
+
+    calkowity_koszt = 0.0
+    for pracownik in lista_pracownikow:
+        calkowity_koszt += pracownik.oblicz_calkowity_koszt()
+
+    return calkowity_koszt
+
+
+calkowity_koszt = oblicz_calkowity_koszt_pracodawcy()
+print(f'Całkowity koszt pracodawcy: {calkowity_koszt}')
